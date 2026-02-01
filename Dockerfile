@@ -8,7 +8,7 @@ COPY package*.json ./
 COPY vite.config.js ./
 
 # Install dependencies
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy source code
 COPY index.html ./
