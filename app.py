@@ -179,6 +179,19 @@ def health_check():
 def test():
     return 'OK'
 
+@app.route('/debug', methods=['GET'])
+def debug():
+    public_dir = '/app/public'
+    files = []
+    if os.path.exists(public_dir):
+        files = os.listdir(public_dir)
+    return jsonify({
+        'public_dir': public_dir,
+        'exists': os.path.exists(public_dir),
+        'files': files,
+        'app_root_path': app.root_path
+    })
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
