@@ -20,8 +20,9 @@ else
     exit 1
 fi
 
-# Instalar dependências Python
-echo "Instalando dependências Python"
-pip install -r requirements.txt
+# Instalar dependências Python (forçando uso do pip)
+echo "Instalando dependências Python..."
+chmod +x .render/install-python-deps.sh
+.render/install-python-deps.sh
 
 echo "=== Build do Render concluído ==="
