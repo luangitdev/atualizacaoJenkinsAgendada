@@ -4,6 +4,10 @@
 
 echo "=== Build do Render iniciado ==="
 
+# Instala dependências do frontend
+echo "Installing frontend dependencies..."
+npm ci --only=production
+
 # Build do frontend
 echo "Building frontend React..."
 npm run build
