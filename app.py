@@ -182,10 +182,18 @@ def test():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
-    if path != "" and os.path.exists(os.path.join(app.root_path, 'public', path)):
-        return send_from_directory(os.path.join(app.root_path, 'public'), path)
-    else:
-        return send_from_directory(os.path.join(app.root_path, 'public'), 'index.html')
+    try:
+        public_dir = os.path.join(app.root_path, 'public')
+        if path != "" and os.path.exists(os.path.join(public_dir, path)):
+            return send_from_directory(public_dir, path)
+        else:
+            index_path = os.path.join(public_dir, 'index.html')
+            if os.path.exists(index_path):
+                return send_from_directory(public_dir, 'index.html')
+            else:
+                return f"index.html not found in {public_dir}", 404
+    except Exception as e:
+        return str(e), 500
 
 if __name__ == '__main__':
     with app.app_context():
