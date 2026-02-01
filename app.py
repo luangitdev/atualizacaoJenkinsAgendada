@@ -175,6 +175,10 @@ def execute_jenkins_job(job_id):
 def health_check():
     return jsonify({'status': 'healthy', 'timestamp': datetime.utcnow().isoformat()})
 
+@app.route('/test', methods=['GET'])
+def test():
+    return 'OK'
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_frontend(path):
