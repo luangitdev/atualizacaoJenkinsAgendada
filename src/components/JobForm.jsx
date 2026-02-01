@@ -5,8 +5,9 @@ function JobForm({ onSubmit, onCancel, initialData }) {
   const [formData, setFormData] = useState({
     app_name: '',
     version: '',
+    version_type: 'manual', // latest, list, manual, head, hash
     target_server: '',
-    app_branch: 'main',
+    app_branch: '',
     skip_clone: true,
     skip_build: false,
     schedule_date: '',
@@ -15,6 +16,21 @@ function JobForm({ onSubmit, onCancel, initialData }) {
     jenkins_user: '',
     jenkins_token: ''
   })
+
+  const servers = [
+    'IMP-01:34.95.251.169',
+    'PROD-01:35.247.243.102',
+    'PROD-02:35.199.97.30',
+    'PROD-03:34.95.176.6',
+    'PROD-04:34.151.235.67',
+    'PROD-05:35.247.231.213',
+    'PROD-06:34.151.245.19',
+    'PROD-07:35.199.65.37',
+    'PROD-08:35.199.103.167',
+    'PROD-09:35.199.120.245',
+    'PROD-10:34.95.167.115',
+    'PROD-11:34.39.155.140'
+  ]
 
   useEffect(() => {
     if (initialData) {
@@ -28,6 +44,17 @@ function JobForm({ onSubmit, onCancel, initialData }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))
+  }
+
+  const getVersionPlaceholder = () => {
+    switch (formData.version_type) {
+      case 'latest': return 'Será usada a última versão aprovada'
+      case 'list': return 'Selecione uma das 5 últimas versões'
+      case 'manual': return 'Ex: 15.13.0.0-0'
+      case 'head': return 'Será usada a última versão do branch (HEAD)'
+      case 'hash': return 'Ex: a1b2c3d ou a1b2c3d4e5f6...'
+      default: return 'Ex: 15.13.0.0-0'
+    }
   }
 
   const handleSubmit = (e) => {
@@ -118,7 +145,7 @@ function JobForm({ onSubmit, onCancel, initialData }) {
                 name="app_name"
                 value={formData.app_name}
                 onChange={handleChange}
-                placeholder="Ex: minha-app"
+                placeholder="Ex: pathfind_teste_aplicacao"
                 required
               />
             </div>
@@ -126,17 +153,42 @@ function JobForm({ onSubmit, onCancel, initialData }) {
             <div className="form-group">
               <label>
                 <Package size={16} style={{ marginRight: '8px' }} />
-                Versão
+                Tipo de Versão
               </label>
-              <input
-                type="text"
-                name="version"
-                value={formData.version}
+              <select
+                name="version_type"
+                value={formData.version_type}
                 onChange={handleChange}
-                placeholder="Ex: 1.0.0"
                 required
-              />
+              >
+                <option value="latest">latest - última versão aprovada</option>
+                <option value="list">list - listar 5 últimas para escolher</option>
+                <option value="manual">número da versão</option>
+                <option value="head">HEAD - última versão do branch</option>
+                <option value="hash">hash do commit</option>
+              </select>
             </div>
+          </div>
+
+          <div className="form-group">
+            <label>
+              <Package size={16} style={{ marginRight: '8px' }} />
+              Versão
+            </label>
+            <input
+              type="text"
+              name="version"
+              value={formData.version}
+              onChange={handleChange}
+              placeholder={getVersionPlaceholder()}
+              required={formData.version_type === 'manual' || formData.version_type === 'hash'}
+              disabled={formData.version_type === 'latest' || formData.version_type === 'head' || formData.version_type === 'list'}
+            />
+            {formData.version_type === 'list' && (
+              <small style={{ color: '#6b7280', marginTop: '4px', display: 'block' }}>
+                Funcionalidade de listar versões será implementada em breve
+              </small>
+            )}
           </div>
 
           <div className="form-group">
@@ -144,14 +196,17 @@ function JobForm({ onSubmit, onCancel, initialData }) {
               <Server size={16} style={{ marginRight: '8px' }} />
               Servidor Alvo
             </label>
-            <input
-              type="text"
+            <select
               name="target_server"
               value={formData.target_server}
               onChange={handleChange}
-              placeholder="Ex: servidor-producao"
               required
-            />
+            >
+              <option value="">Selecione um servidor</option>
+              {servers.map(server => (
+                <option key={server} value={server}>{server}</option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -159,17 +214,14 @@ function JobForm({ onSubmit, onCancel, initialData }) {
               <GitBranch size={16} style={{ marginRight: '8px' }} />
               Branch
             </label>
-            <select
+            <input
+              type="text"
               name="app_branch"
               value={formData.app_branch}
               onChange={handleChange}
+              placeholder="Ex: main, develop, hot-fix-login-v.15.13.1.0-30"
               required
-            >
-              <option value="main">main</option>
-              <option value="develop">develop</option>
-              <option value="master">master</option>
-              <option value="release">release</option>
-            </select>
+            />
           </div>
 
           <div className="grid grid-2">
