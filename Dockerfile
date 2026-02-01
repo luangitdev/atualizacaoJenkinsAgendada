@@ -17,6 +17,9 @@ COPY src/ ./src/
 # Build frontend
 RUN npm run build
 
+# Verify build output
+RUN ls -la /app/dist || exit 1
+
 # Production stage for backend
 FROM python:3.11-slim
 
@@ -39,6 +42,9 @@ COPY models.py ./
 
 # Copy built frontend from build stage
 COPY --from=frontend-build /app/dist ./public
+
+# Verify public directory
+RUN ls -la ./public || exit 1
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser
