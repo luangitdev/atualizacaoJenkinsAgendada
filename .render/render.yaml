@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: jenkins-scheduler
+    env: python
+    buildCommand: chmod +x .render/render-build.sh && .render/render-build.sh
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 4
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    plan: free
+    dockerfile: Dockerfile
