@@ -196,7 +196,18 @@ def debug():
 @app.route('/<path:path>')
 def serve_frontend(path):
     try:
-        public_dir = '/app/public'
+        # Try /app/public first (Docker), then dist/ (native Render)
+        possible_dirs = ['/app/public', os.path.join(app.root_path, 'dist')]
+        
+        public_dir = None
+        for dir_path in possible_dirs:
+            if os.path.exists(dir_path):
+                public_dir = dir_path
+                break
+        
+        if not public_dir:
+            return f"Frontend directory not found. Tried: {possible_dirs}", 404
+        
         if path != "" and os.path.exists(os.path.join(public_dir, path)):
             return send_from_directory(public_dir, path)
         else:
