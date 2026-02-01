@@ -183,7 +183,7 @@ def test():
 @app.route('/<path:path>')
 def serve_frontend(path):
     try:
-        public_dir = os.path.join(app.root_path, 'public')
+        public_dir = '/app/public'
         if path != "" and os.path.exists(os.path.join(public_dir, path)):
             return send_from_directory(public_dir, path)
         else:
