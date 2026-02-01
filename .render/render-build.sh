@@ -20,4 +20,8 @@ else
     exit 1
 fi
 
+# Instalar dependências Python
+echo "Instalando dependências Python"
+pip install -r requirements.txt
+
 echo "=== Build do Render concluído ==="
