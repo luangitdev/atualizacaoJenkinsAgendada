@@ -6,7 +6,7 @@ echo "=== Build do Render iniciado ==="
 
 # Instala dependências do frontend
 echo "Installing frontend dependencies..."
-npm install --only=production
+npm install
 
 # Build do frontend
 echo "Building frontend React..."
